@@ -239,6 +239,7 @@ controller:
     - job-dsl:1.77
     - github-branch-source:2.9.3
     - blueocean:1.24.3
+    - hashicorp-vault-plugin:3.7.0
   containerEnv:
     - name: GITHUB_TOKEN
       valueFrom:
@@ -265,3 +266,7 @@ controller:
         secretKeyRef:
           name: secret-configs
           key: devops-catalyst-systems.conf
+    - name: VAULT_TOKEN
+      value: ${VAULT_TOKEN}
+    - name: VAULT_APPROLE_SECRET_ID
+      value: ${VAULT_APPROLE_SECRET_ID}
