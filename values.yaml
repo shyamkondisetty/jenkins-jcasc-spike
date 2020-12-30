@@ -1,0 +1,251 @@
+persistence:
+  enabled: false
+controller:
+  JCasC:
+    configScripts:
+      credentials: |
+        credentials:
+          system:
+            domainCredentials:
+            - credentials:
+              - usernamePassword:
+                  description: "Nexus credentials"
+                  id: "nexuscredentials"
+                  password: ${NEXUS_PASSWORD}
+                  scope: GLOBAL
+                  username: "admin"
+              - usernamePassword:
+                  description: "githubToken"
+                  id: "githubCredentials"
+                  password: ${GITHUB_TOKEN}
+                  scope: GLOBAL
+                  username: "shyamkondisetty"
+              - file:
+                  description: "qaConfig"
+                  fileName: "devops-catalyst-qa.conf"
+                  id: "kubernetes-qa"
+                  scope: GLOBAL
+                  secretBytes: ${QA_CONFIG}
+              - file:
+                  description: "stagingConfig"
+                  fileName: "devops-catalyst-staging.conf"
+                  id: "kubernetes-staging"
+                  scope: GLOBAL
+                  secretBytes: ${STAGING_CONFIG}
+              - file:
+                  description: "kubeconfig file of systems cluster"
+                  fileName: "devops-catalyst-systems.conf"
+                  id: "kubernetes-systems"
+                  scope: GLOBAL
+                  secretBytes: ${SYSTEMS_CONFIG}
+
+      config-file-provider: |
+        unclassified:
+          globalConfigFiles:
+            configs:
+            - json:
+                content: "{\n\t\"postgresql\": {\n\t\t\"DEPLOY_TYPE\": \"helm\",\n\t\t\"CHART\"\
+                  : \"infra-basic/postgresql\",\n\t\t\"VERSION\": \"9.8.9\"\n\t},\n\t\"nexus-artifactory\"\
+                  : {\n\t\t\"DEPLOY_TYPE\": \"helm\",\n\t\t\"CHART\": \"nexus-artifactory\"\
+                  ,\n\t\t\"VERSION\": \"28.1.1\"\n\t},\n\t\"elasticsearch\": {\n\t\t\"DEPLOY_TYPE\"\
+                  : \"helm\",\n\t\t\"CHART\": \"infra-basic/elasticstackwithexistinghelmcharts/elasticsearch\"\
+                  ,\n\t\t\"VERSION\": \"7.8.0\"\n\t},\n\t\"filebeat\": {\n\t\t\"DEPLOY_TYPE\"\
+                  : \"helm\",\n\t\t\"CHART\": \"infra-basic/elasticstackwithexistinghelmcharts/filebeat\"\
+                  ,\n\t\t\"VERSION\": \"7.8.0\"\n\t},\n\t\"kibana\": {\n\t\t\"DEPLOY_TYPE\"\
+                  : \"helm\",\n\t\t\"CHART\": \"infra-basic/elasticstackwithexistinghelmcharts/kibana\"\
+                  ,\n\t\t\"VERSION\": \"7.8.0\"\n\t},\n\t\"prometheus\": {\n\t\t\"DEPLOY_TYPE\"\
+                  : \"helm\",\n\t\t\"CHART\": \"infra-metrics/prometheus\",\n\t\t\"VERSION\"\
+                  : \"11.12.1\"\n\t},\n\t\"grafana\": {\n\t\t\"DEPLOY_TYPE\": \"helm\",\n\t\
+                  \t\"CHART\": \"infra-metrics/grafana\",\n\t\t\"VERSION\": \"5.5.7\"\n\t\
+                  },\n\t\"infra-central-config\": {\n\t\t\"DEPLOY_TYPE\": \"helm\",\n\t\t\"\
+                  CHART\": \"infra-central-config\",\n\t\t\"VERSION\": \"1.0.0\"\n\t},\n\t\
+                  \"infra-vault\": {\n\t\t\"DEPLOY_TYPE\": \"helm\",\n\t\t\"CHART\": \"infra-vault\"\
+                  ,\n\t\t\"VERSION\": \"0.8.0\"\n\t},\n\t\"infra-keycloak\": {\n\t\t\"DEPLOY_TYPE\"\
+                  : \"helm\",\n\t\t\"CHART\": \"infra-keycloak\",\n\t\t\"VERSION\": \"9.5.0\"\
+                  \n\t},\n  \t\"jenkins\": {\n  \t\t\"DEPLOY_TYPE\": \"helm\",\n      \t\"\
+                  CHART\": \"jenkins\",\n      \t\"VERSION\": \"latest\"\n  \t},\n\t\"nexus-secret\"\
+                  : {\n\t\t\"DEPLOY_TYPE\": \"kubectl\",\n\t\t\"FILES_LOCATION\": \"nexus-secret\"\
+                  \n\t},\n\t\"postgresclient\": {\n\t\t\"DEPLOY_TYPE\": \"kubectl\",\n\t\t\
+                  \"FILES_LOCATION\": \"postgresclient\"\n\t},\n\t\"dockerregistry\": {\n\t\
+                  \t\"DEPLOY_TYPE\": \"kubectl\",\n\t\t\"FILES_LOCATION\": \"dockerregistry\"\
+                  \n\t}\n}"
+                id: "2be6d479-3694-4dea-b11e-f42d334c5c9e"
+                name: "JsonServiceConfig"
+                providerId: "org.jenkinsci.plugins.configfiles.json.JsonConfig"
+            - json:
+                comment: "json config for cluster config names"
+                content: "{\"CLUSTER_CONFIG_NAME\":[\"kubernetes-staging\",\"kubernetes-qa\"\
+                  ,\"kubernetes-systems\"]}"
+                id: "2f611333-d362-437d-8a28-a964bff1f858"
+                name: "JsonClusterConfig"
+                providerId: "org.jenkinsci.plugins.configfiles.json.JsonConfig"
+            - json:
+                comment: "JsonServices"
+                content: "{\n\t\"SERVICE_NAME\": [\n\t\t'postgresql',\n\t\t'nexus-secret',\n\
+                  \      \t'nexus-artifactory', \n      \t'postgresclient', \n      \t'elasticsearch',\
+                  \ \n      \t'filebeat', \n      \t'kibana',\n      \t'grafana',\n      \t\
+                  'prometheus',\n      \t'infra-central-config', \n      \t'infra-vault',\n\
+                  \      \t'infra-keycloak',\n      \t'jenkins',\n      \t'dockerregistry'\n\
+                  \t]\n}"
+                id: "5c3db4db-a692-4ce8-b0fb-58381dac05aa"
+                name: "JsonServiceNameConfig"
+                providerId: "org.jenkinsci.plugins.configfiles.json.JsonConfig"
+
+      jobs: |
+        jobs:
+          - script: >
+              pipelineJob('Deploy_infra') {
+                definition {
+                    cpsScm {
+                        scm {
+                            git {
+                                branch('master')
+                                remote {
+                                    url('https://github.com/twCatalyst/service-deployment-starter-helm.git')
+                                    credentials('githubCredentials')
+                                }
+                            }
+                        }
+                        scriptPath('Jenkinsfile_deploy_infra')
+                    }
+                 }
+              }
+
+              pipelineJob('Infra_package') {
+                definition {
+                    cpsScm {
+                        scm {
+                            git {
+                                branch('master')
+                                remote {
+                                    url('https://github.com/twCatalyst/service-deployment-starter-helm.git')
+                                    credentials('githubCredentials')
+                                }
+                            }
+                        }
+                        scriptPath('Jenkinsfile_infra_package')
+                    }
+                 }
+              }
+
+              pipelineJob('Deploy_qa') {
+                definition {
+                    cpsScm {
+                        scm {
+                            git {
+                                branch('master')
+                                remote {
+                                    url('https://github.com/twCatalyst/jenkins-shared-library.git')
+                                    credentials('githubCredentials')
+                                }
+                            }
+                        }
+                        scriptPath('deploy/Jenkinsfile_deploy_qa')
+                    }
+                 }
+              }
+
+              pipelineJob('Deploy_staging') {
+                definition {
+                    cpsScm {
+                        scm {
+                            git {
+                                branch('master')
+                                remote {
+                                    url('https://github.com/twCatalyst/jenkins-shared-library.git')
+                                    credentials('githubCredentials')
+                                }
+                            }
+                        }
+                        scriptPath('deploy/Jenkinsfile_deploy_stage')
+                    }
+                 }
+              }
+
+              pipelineJob('Secrets scanner') {
+                definition {
+                    cpsScm {
+                        scm {
+                            git {
+                                branch('master')
+                                remote {
+                                    url('https://github.com/twCatalyst/service-starter.git')
+                                    credentials('githubCredentials')
+                                }
+                            }
+                        }
+                        scriptPath('JenkinsfileSecrets')
+                    }
+                 }
+              }
+
+              pipelineJob('security') {
+                definition {
+                    cpsScm {
+                        scm {
+                            git {
+                                branch('master')
+                                remote {
+                                    url('https://github.com/twCatalyst/service-starter.git')
+                                    credentials('githubCredentials')
+                                }
+                            }
+                        }
+                        scriptPath('JenkinsfileSecurity')
+                    }
+                 }
+              }
+
+              organizationFolder('catalyst') {
+                  displayName('catalyst')
+                  triggers {
+                      periodic(1)
+                  }
+                  organizations {
+                      github {
+                          repoOwner("twCatalyst")
+                          apiUri("https://api.github.com")
+                          credentialsId('githubCredentials')
+                      }
+                  }
+                  projectFactories {
+                      workflowMultiBranchProjectFactory {
+                          scriptPath("Jenkinsfile")
+                      }
+                  }
+              }
+  installPlugins:
+    - kubernetes:1.27.6
+    - workflow-aggregator:2.6
+    - configuration-as-code:1.46
+  additionalPlugins:
+    - config-file-provider:3.7.0
+    - job-dsl:1.77
+    - github-branch-source:2.9.3
+    - blueocean:1.24.3
+  containerEnv:
+    - name: GITHUB_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: secrets
+          key: GITHUB_TOKEN
+    - name: NEXUS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: secrets
+          key: NEXUS_PASSWORD
+    - name: QA_CONFIG
+      valueFrom:
+        secretKeyRef:
+          name: secret-configs
+          key: devops-catalyst-qa.conf
+    - name: STAGING_CONFIG
+      valueFrom:
+        secretKeyRef:
+          name: secret-configs
+          key: devops-catalyst-staging.conf
+    - name: SYSTEMS_CONFIG
+      valueFrom:
+        secretKeyRef:
+          name: secret-configs
+          key: devops-catalyst-systems.conf
