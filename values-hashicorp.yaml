@@ -8,17 +8,6 @@ controller:
           system:
             domainCredentials:
             - credentials:
-              - vaultTokenCredential:
-                  description: "vault Token"
-                  id: "vaultToken"
-                  scope: GLOBAL
-                  token: "${VAULT_TOKEN}"
-              - vaultAppRoleCredential:
-                  scope: GLOBAL
-                  id: "vaultAppRoleSecret"
-                  description: "vault-approle-secret"
-                  roleId: "3aa0afac-434b-c1e7-41c9-d1a9be54c37a"
-                  secretId: "${VAULT_APPROLE_SECRET_ID}"
               - usernamePassword:
                   description: "Nexus credentials"
                   id: "nexuscredentials"
@@ -28,7 +17,7 @@ controller:
               - usernamePassword:
                   description: "githubToken"
                   id: "githubCredentials"
-                  password: ${GITHUB_TOKEN}
+                  password: ${githubtoken}
                   scope: GLOBAL
                   username: "shyamkondisetty"
               - file:
@@ -49,12 +38,6 @@ controller:
                   id: "kubernetes-systems"
                   scope: GLOBAL
                   secretBytes: ${SYSTEMS_CONFIG}
-      hashicorp-vault: |
-        unclassified:
-          hashicorpVault:
-            configuration:
-              vaultCredentialId: "vaultAppRoleCredential"
-              vaultUrl: "http://vault:8200"
       config-file-provider: |
         unclassified:
           globalConfigFiles:
@@ -267,7 +250,9 @@ controller:
         secretKeyRef:
           name: secret-configs
           key: devops-catalyst-systems.conf
-    - name: VAULT_TOKEN
-      value: ${VAULT_TOKEN}
-    - name: VAULT_APPROLE_SECRET_ID
-      value: ${VAULT_APPROLE_SECRET_ID}
+    - name: CASC_VAULT_TOKEN
+      value: ${HASHICORP_VAULT_TOKEN}
+    - name: CASC_VAULT_PATHS
+      value: "secret/demo"
+    - name: CASC_VAULT_URL
+      value: "http://vault:8200"
