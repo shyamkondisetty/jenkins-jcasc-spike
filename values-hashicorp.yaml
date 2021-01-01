@@ -240,6 +240,7 @@ controller:
     - github-branch-source:2.9.3
     - blueocean:1.24.3
     - hashicorp-vault-plugin:3.7.0
+    - hashicorp-vault-pipeline:1.3
   containerEnv:
     - name: GITHUB_TOKEN
       valueFrom:
