@@ -11,7 +11,7 @@ controller:
               - usernamePassword:
                   description: "Nexus credentials"
                   id: "nexuscredentials"
-                  password: ${NEXUS_PASSWORD}
+                  password: ${nexuspassword}
                   scope: GLOBAL
                   username: "admin"
               - usernamePassword:
@@ -25,19 +25,19 @@ controller:
                   fileName: "devops-catalyst-qa.conf"
                   id: "kubernetes-qa"
                   scope: GLOBAL
-                  secretBytes: ${QA_CONFIG}
+                  secretBytes: ${qa_config}
               - file:
                   description: "stagingConfig"
                   fileName: "devops-catalyst-staging.conf"
                   id: "kubernetes-staging"
                   scope: GLOBAL
-                  secretBytes: ${STAGING_CONFIG}
+                  secretBytes: ${stage_config}
               - file:
                   description: "kubeconfig file of systems cluster"
                   fileName: "devops-catalyst-systems.conf"
                   id: "kubernetes-systems"
                   scope: GLOBAL
-                  secretBytes: ${SYSTEMS_CONFIG}
+                  secretBytes: ${systems_config}
       config-file-provider: |
         unclassified:
           globalConfigFiles:
@@ -253,6 +253,6 @@ controller:
     - name: CASC_VAULT_TOKEN
       value: ${HASHICORP_VAULT_TOKEN}
     - name: CASC_VAULT_PATHS
-      value: "secret/demo"
+      value: "secret/jenkins/credentials"
     - name: CASC_VAULT_URL
       value: "http://vault:8200"
