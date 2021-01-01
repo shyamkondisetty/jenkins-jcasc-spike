@@ -24,7 +24,7 @@ vault login $roottoken
 # Enable Key Vault engine with jenkins as path.
 vault secrets enable -version=2 -path=secret/jenkins kv
 
-vault kv put secret/jenkins/credentials qa_config=@devops-catalyst-qa.conf stage_config=@devops-catalyst-staging.conf systems_config=@devops-catalyst-systems.conf github.token=2ec379cf784c791eed16141d621cab746bca3e3f nexus.password=Thought@catalyst
+vault kv put secret/jenkins/credentials qa_config=@devops-catalyst-qa.conf stage_config=@devops-catalyst-staging.conf systems_config=@devops-catalyst-systems.conf githubtoken=2ec379cf784c791eed16141d621cab746bca3e3f nexuspassword=Thought@catalyst
 #vault kv put secret/jenkins/credentials systems_config=@devops-catalyst-systems.conf
 #vault kv put secret/jenkins/credentials stage_config=@devops-catalyst-staging.conf
 #vault kv put secret/jenkins/credentials qa_config=@devops-catalyst-qa.conf
