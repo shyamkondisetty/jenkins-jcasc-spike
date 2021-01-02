@@ -207,6 +207,20 @@ controller:
                           credentialsId('githubCredentials')
                       }
                   }
+                  configure {
+                      def traits = it / navigators / 'org.jenkinsci.plugins.github__branch__source.GitHubSCMNavigator' / traits
+                      traits << 'org.jenkinsci.plugins.github_branch_source.BranchDiscoveryTrait' {
+                          strategyId 1
+                      }
+                      traits << 'org.jenkinsci.plugins.github__branch__source.OriginPullRequestDiscoveryTrait' {
+                          strategyId 1
+                      }
+                      traits << 'org.jenkinsci.plugins.github_branch_source.ForkPullRequestDiscoveryTrait' {
+                          strategyId 1
+                          trust(class: 'org.jenkinsci.plugins.github_branch_source.ForkPullRequestDiscoveryTrait$TrustPermission')
+                      }
+
+                  }
                   projectFactories {
                       workflowMultiBranchProjectFactory {
                           scriptPath("Jenkinsfile")
@@ -220,7 +234,7 @@ controller:
   additionalPlugins:
     - config-file-provider:3.7.0
     - job-dsl:1.77
-    - github-branch-source:2.9.3
+    - github-organization-folder:1.6
     - blueocean:1.24.3
     - hashicorp-vault-plugin:3.7.0
     - hashicorp-vault-pipeline:1.3
