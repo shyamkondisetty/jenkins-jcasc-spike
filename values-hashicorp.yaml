@@ -250,9 +250,11 @@ controller:
         secretKeyRef:
           name: secret-configs
           key: devops-catalyst-systems.conf
-    - name: CASC_VAULT_TOKEN
-      value: ${HASHICORP_VAULT_TOKEN}
+    - name: CASC_VAULT_APPROLE
+      value: ${VAULT_APPROLE_ID}
+    - name: CASC_VAULT_APPROLE_SECRET
+      value: ${VAULT_APPROLE_SECRET_ID}
     - name: CASC_VAULT_PATHS
-      value: "secret/jenkins/credentials"
+      value: "secret/jenkinscredentials"
     - name: CASC_VAULT_URL
       value: "http://vault:8200"

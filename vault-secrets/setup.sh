@@ -22,18 +22,18 @@ vault operator unseal $unsealkey
 vault login $roottoken
 
 # Enable Key Vault engine with jenkins as path.
-vault secrets enable -version=2 -path=secret/jenkins kv
+vault secrets enable -version=2 -path=secret kv
 
-vault kv put secret/jenkins/credentials qa_config=@devops-catalyst-qa.conf stage_config=@devops-catalyst-staging.conf systems_config=@devops-catalyst-systems.conf githubtoken=2ec379cf784c791eed16141d621cab746bca3e3f nexuspassword=Thought@catalyst
+vault kv put secret/jenkinscredentials qa_config=@devops-catalyst-qa.conf stage_config=@devops-catalyst-staging.conf systems_config=@devops-catalyst-systems.conf githubtoken=540e7da57f8b42f3230053ff2c8441cd8ebe8de3 nexuspassword=Thought@catalyst
 #vault kv put secret/jenkins/credentials systems_config=@devops-catalyst-systems.conf
 #vault kv put secret/jenkins/credentials stage_config=@devops-catalyst-staging.conf
 #vault kv put secret/jenkins/credentials qa_config=@devops-catalyst-qa.conf
 
 # Get the paths under jenkins kv engine.
-vault kv list secret/jenkins/
+vault kv list secret
 
 # Get the secrets under jenkins/settings/.
-vault kv get secret/jenkins/credentials
+vault kv get secret/jenkinscredentials
 
 # Enable AppRole auth.
 vault auth enable approle
