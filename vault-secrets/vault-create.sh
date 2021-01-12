@@ -1,3 +1,3 @@
 #!/bin/bash
 
-helm install vault hashicorp/vault -n infra
+helm install vault hashicorp/vault -n ci

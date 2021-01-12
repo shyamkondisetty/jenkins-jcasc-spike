@@ -1,6 +1,9 @@
 persistence:
   enabled: false
 controller:
+  ingress:
+    enabled: true
+    hostName: jenkins.catalyst.com
   JCasC:
     configScripts:
       credentials: |
@@ -16,7 +19,7 @@ controller:
                   username: "admin"
               - usernamePassword:
                   description: "githubToken"
-                  id: "githubCredentials"
+                  id: "githubcredentials"
                   password: ${GITHUB_TOKEN}
                   scope: GLOBAL
                   username: "shyamkondisetty"
@@ -25,19 +28,19 @@ controller:
                   fileName: "devops-catalyst-qa.conf"
                   id: "kubernetes-qa"
                   scope: GLOBAL
-                  secretBytes: ${QA_CONFIG}
+                  secretBytes: ${base64:${QA_CONFIG}}
               - file:
                   description: "stagingConfig"
                   fileName: "devops-catalyst-staging.conf"
                   id: "kubernetes-staging"
                   scope: GLOBAL
-                  secretBytes: ${STAGING_CONFIG}
+                  secretBytes: ${base64:${STAGING_CONFIG}}
               - file:
                   description: "kubeconfig file of systems cluster"
                   fileName: "devops-catalyst-systems.conf"
                   id: "kubernetes-systems"
                   scope: GLOBAL
-                  secretBytes: ${SYSTEMS_CONFIG}
+                  secretBytes: ${base64:${SYSTEMS_CONFIG}}
 
       config-file-provider: |
         unclassified:
@@ -99,10 +102,10 @@ controller:
                     cpsScm {
                         scm {
                             git {
-                                branch('master')
+                                branch('nexus-jenkins-automation')
                                 remote {
                                     url('https://github.com/twCatalyst/service-deployment-starter-helm.git')
-                                    credentials('githubCredentials')
+                                    credentials('githubcredentials')
                                 }
                             }
                         }
@@ -116,10 +119,10 @@ controller:
                     cpsScm {
                         scm {
                             git {
-                                branch('master')
+                                branch('nexus-jenkins-automation')
                                 remote {
                                     url('https://github.com/twCatalyst/service-deployment-starter-helm.git')
-                                    credentials('githubCredentials')
+                                    credentials('githubcredentials')
                                 }
                             }
                         }
@@ -133,10 +136,10 @@ controller:
                     cpsScm {
                         scm {
                             git {
-                                branch('master')
+                                branch('nexus-jenkins-automation')
                                 remote {
                                     url('https://github.com/twCatalyst/jenkins-shared-library.git')
-                                    credentials('githubCredentials')
+                                    credentials('githubcredentials')
                                 }
                             }
                         }
@@ -150,10 +153,10 @@ controller:
                     cpsScm {
                         scm {
                             git {
-                                branch('master')
+                                branch('nexus-jenkins-automation')
                                 remote {
                                     url('https://github.com/twCatalyst/jenkins-shared-library.git')
-                                    credentials('githubCredentials')
+                                    credentials('githubcredentials')
                                 }
                             }
                         }
@@ -167,10 +170,10 @@ controller:
                     cpsScm {
                         scm {
                             git {
-                                branch('master')
+                                branch('nexus-jenkins-automation')
                                 remote {
                                     url('https://github.com/twCatalyst/service-starter.git')
-                                    credentials('githubCredentials')
+                                    credentials('githubcredentials')
                                 }
                             }
                         }
@@ -184,10 +187,10 @@ controller:
                     cpsScm {
                         scm {
                             git {
-                                branch('master')
+                                branch('nexus-jenkins-automation')
                                 remote {
                                     url('https://github.com/twCatalyst/service-starter.git')
-                                    credentials('githubCredentials')
+                                    credentials('githubcredentials')
                                 }
                             }
                         }
@@ -205,7 +208,7 @@ controller:
                       github {
                           repoOwner("twCatalyst")
                           apiUri("https://api.github.com")
-                          credentialsId('githubCredentials')
+                          credentialsId('githubcredentials')
                       }
                   }
                   configure {
@@ -237,6 +240,8 @@ controller:
     - job-dsl:1.77
     - github-organization-folder:1.6
     - blueocean:1.24.3
+    - pipeline-utility-steps:2.6.1
+    - cloudshell-sandbox:1.8.3
   containerEnv:
     - name: GITHUB_TOKEN
       valueFrom:
